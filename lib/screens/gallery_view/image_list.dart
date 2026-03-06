@@ -48,34 +48,25 @@ class ImageListState extends State<ImageList> {
             final image = images[index];
             return Stack(
               children: [
-                Image.network(
-                  image['url'],
-                  fit: BoxFit.fitWidth,
-                ),
+                Image.network(image['url'], fit: BoxFit.fitWidth),
                 Positioned(
-                  top: 8,   // distance from top
-                  right: 8, // distance from right
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: Colors.white54, // semi-transparent background
-                      //shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.delete,
-                      //color: Colors.white,
-                      //size: 20,
+                  top: 8,
+                  right: 8,
+                  child: GestureDetector(
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Clicked: ${image['title']}')),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(color: Colors.white54),
+                      child: const Icon(Icons.delete),
                     ),
                   ),
                 ),
               ],
             );
-            /*return ListTile(
-              contentPadding: EdgeInsets.all(8),
-              title: Text(image['title']),
-              subtitle: Text('subtitle'),
-              leading: Image.network(image['url']),
-            );*/
           },
         );
       },
