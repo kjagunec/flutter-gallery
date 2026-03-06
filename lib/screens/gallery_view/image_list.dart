@@ -36,11 +36,30 @@ class ImageList extends StatelessWidget {
                   right: 8,
                   child: GestureDetector(
                     onTap: () async {
-                      await _imageService.removeImage(image.id);
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Deleted: ${image.title}')),
-                        );
+                      final confirmDelete = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Confirm Delete'),
+                          content: Text('Are you sure you want to delete "${image.title}"?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(false),
+                              child: const Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(true),
+                              child: const Text('Delete'),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (confirmDelete == true) {
+                        await _imageService.removeImage(image.id);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Deleted: ${image.title}')),
+                          );
+                        }
                       }
                     },
                     child: Container(
