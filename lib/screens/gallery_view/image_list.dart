@@ -5,10 +5,10 @@ class ImageList extends StatefulWidget {
   const ImageList({super.key});
 
   @override
-  _ImageListState createState() => _ImageListState();
+  ImageListState createState() => ImageListState();
 }
 
-class _ImageListState extends State<ImageList> {
+class ImageListState extends State<ImageList> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<List<Map<String, dynamic>>> _fetchImages() async {
@@ -16,11 +16,11 @@ class _ImageListState extends State<ImageList> {
     return snapshot.docs
         .map(
           (doc) => {
-        'url': doc['url'],
-        'title': doc['title'],
-        'dateCreated': doc['dateCreated'],
-      },
-    )
+            'url': doc['url'],
+            'title': doc['title'],
+            'dateCreated': doc['dateCreated'],
+          },
+        )
         .toList();
   }
 
@@ -30,15 +30,15 @@ class _ImageListState extends State<ImageList> {
       future: _fetchImages(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return Center(child: CircularProgressIndicator());
         }
 
         if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+          return Center(child: Text('Error: ${snapshot.error}'));
         }
 
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Text('No images available.');
+          return Center(child: Text('No images available.'));
         }
 
         final images = snapshot.data!;
@@ -46,12 +46,36 @@ class _ImageListState extends State<ImageList> {
           itemCount: images.length,
           itemBuilder: (context, index) {
             final image = images[index];
-            return ListTile(
+            return Stack(
+              children: [
+                Image.network(
+                  image['url'],
+                  fit: BoxFit.fitWidth,
+                ),
+                Positioned(
+                  top: 8,   // distance from top
+                  right: 8, // distance from right
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.white54, // semi-transparent background
+                      //shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.delete,
+                      //color: Colors.white,
+                      //size: 20,
+                    ),
+                  ),
+                ),
+              ],
+            );
+            /*return ListTile(
               contentPadding: EdgeInsets.all(8),
               title: Text(image['title']),
               subtitle: Text('subtitle'),
               leading: Image.network(image['url']),
-            );
+            );*/
           },
         );
       },
