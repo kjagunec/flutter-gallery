@@ -1,33 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:gallery/services/image_service.dart';
 
-class ImageList extends StatefulWidget {
-  const ImageList({super.key});
+class ImageList extends StatelessWidget {
+  final ImageService _imageService = ImageService();
 
-  @override
-  ImageListState createState() => ImageListState();
-}
-
-class ImageListState extends State<ImageList> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  Future<List<Map<String, dynamic>>> _fetchImages() async {
-    final snapshot = await _firestore.collection('images').get();
-    return snapshot.docs
-        .map(
-          (doc) => {
-            'url': doc['url'],
-            'title': doc['title'],
-            'dateCreated': doc['dateCreated'],
-          },
-        )
-        .toList();
-  }
+  ImageList({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: _fetchImages(),
+    return StreamBuilder(
+      stream: _imageService.streamImages(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -48,15 +30,18 @@ class ImageListState extends State<ImageList> {
             final image = images[index];
             return Stack(
               children: [
-                Image.network(image['url'], fit: BoxFit.fitWidth),
+                Center(child: Image.network(image.url)),
                 Positioned(
                   top: 8,
                   right: 8,
                   child: GestureDetector(
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Clicked: ${image['title']}')),
-                      );
+                    onTap: () async {
+                      await _imageService.removeImage(image.id);
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Deleted: ${image.title}')),
+                        );
+                      }
                     },
                     child: Container(
                       padding: const EdgeInsets.all(4),
