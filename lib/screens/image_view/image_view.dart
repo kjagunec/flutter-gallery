@@ -59,12 +59,16 @@ class ImageView extends StatelessWidget {
         Positioned(
           top: 8,
           right: 8,
-          child: GestureDetector(
-            onTap: () => _confirmAndDelete(context, image),
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(color: Colors.white54),
-              child: const Icon(Icons.delete),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white54,
+                borderRadius: BorderRadius.circular(4)
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.delete),
+              color: Colors.black87,
+              tooltip: 'Delete Image',
+              onPressed: () => _confirmAndDelete(context, image),
             ),
           ),
         ),
