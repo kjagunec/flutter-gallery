@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:gallery/models/image_model.dart';
 import 'package:gallery/services/image_service.dart';
 
-class ImageList extends StatelessWidget {
-  final ImageService _imageService = ImageService();
+class ImageView extends StatelessWidget {
+  final ImageService imageService;
 
-  ImageList({super.key});
+  const ImageView({super.key, required this.imageService});
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: _imageService.streamImages(),
+      stream: imageService.streamImages(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildLoading();
@@ -92,7 +92,7 @@ class ImageList extends StatelessWidget {
     );
 
     if (confirmDelete == true) {
-      await _imageService.removeImage(image.id);
+      await imageService.removeImage(image.id);
       if (context.mounted) {
         ScaffoldMessenger.of(
           context,
