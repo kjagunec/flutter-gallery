@@ -44,11 +44,31 @@ class ImageView extends StatelessWidget {
   }
 
   Widget _buildImageList(List<ImageModel> images) {
-    return ListView.builder(
-      itemCount: images.length,
-      itemBuilder: (context, index) {
-        final image = images[index];
-        return _buildImageItem(context, image);
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        if (orientation == Orientation.portrait) {
+          return ListView.separated(
+            itemCount: images.length,
+            itemBuilder: (context, index) {
+              final image = images[index];
+              return _buildImageItem(context, image);
+            },
+            separatorBuilder: (context, index) => const SizedBox(height: 8),
+          );
+        } else {
+          return GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemCount: images.length,
+            itemBuilder: (context, index) {
+              final image = images[index];
+              return _buildImageItem(context, image);
+            },
+          );
+        }
       },
     );
   }
