@@ -47,12 +47,13 @@ class ImageView extends StatelessWidget {
     return OrientationBuilder(
       builder: (context, orientation) {
         if (orientation == Orientation.portrait) {
-          return ListView.builder(
+          return ListView.separated(
             itemCount: images.length,
             itemBuilder: (context, index) {
               final image = images[index];
               return _buildImageItem(context, image);
             },
+            separatorBuilder: (context, index) => const SizedBox(height: 8),
           );
         } else {
           return GridView.builder(
