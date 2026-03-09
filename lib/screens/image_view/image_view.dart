@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gallery/models/image_model.dart';
+import 'package:gallery/screens/detail_view/detail_view.dart';
 import 'package:gallery/services/image_service.dart';
 
 class ImageView extends StatelessWidget {
@@ -55,14 +56,26 @@ class ImageView extends StatelessWidget {
   Widget _buildImageItem(BuildContext context, ImageModel image) {
     return Stack(
       children: [
-        Center(child: Image.network(image.url)),
+        SizedBox(
+          width: double.infinity,
+          child: GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => DetailView(image: image)),
+            ),
+            child: Hero(
+              tag: image.id,
+              child: Image.network(image.url, fit: BoxFit.cover),
+            ),
+          ),
+        ),
         Positioned(
           top: 8,
           right: 8,
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white54,
-                borderRadius: BorderRadius.circular(4)
+              borderRadius: BorderRadius.circular(4),
             ),
             child: IconButton(
               icon: const Icon(Icons.delete),
